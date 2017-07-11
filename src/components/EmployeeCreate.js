@@ -1,9 +1,17 @@
 import React, { Component } from 'react';
+import { Picker, Text } from 'react-native'
 import { Card, CardSection, Input, Button } from './common'
-import { employeeUpdate } from '../actions';
+import { employeeUpdate, employeeCreate } from '../actions';
 import { connect } from 'react-redux';
 
 class EmployeeCreate extends Component {
+
+    onButtonPress() {
+        const { name, phone, shift } = this.props;
+
+        this.props.employeeCreate({ name, phone, shift: shift || 'Monday' });
+    }
+
     render() {
         return (
             <Card>
@@ -22,17 +30,30 @@ class EmployeeCreate extends Component {
                         label="phone"
                         placeholder="03323431306"
                         value={this.props.phone}
-                        onChangeText={value  => this.props.employeeUpdate({ prop: 'phone ', value })}
+                        onChangeText={value => this.props.employeeUpdate({ prop: 'phone', value })}
                         />
                 </CardSection>
 
                 <CardSection>
-
+                    <Text style={styles.PickerTextStyle}> Shift</Text>
+                    <Picker
+                        style={{ flex: 1, marginLeft: 75 }}
+                        selectedValue={this.props.shift}
+                        onValueChange={value => this.props.employeeUpdate({ prop: 'shift', value })}
+                        >
+                        <Picker.Item label="Monday" value="Monday" />
+                        <Picker.Item label="Tuesday" value="Tuesday" />
+                        <Picker.Item label="Wednesday" value="Wednesday" />
+                        <Picker.Item label="Thursday" value="Thursday" />
+                        <Picker.Item label="Friday" value="Friday" />
+                        <Picker.Item label="Saturday" value="Saturday" />
+                        <Picker.Item label="Sunday" value="Sunday" />
+                    </Picker>
                 </CardSection>
 
                 <CardSection>
-                    <Button>
-                        save
+                    <Button onPress={this.onButtonPress.bind(this)}>
+                        Create Employee
                     </Button>
                 </CardSection>
 
@@ -46,4 +67,13 @@ const mapStateToProps = (state) => {
     return { name, phone, shift };
 }
 
-export default connect(mapStateToProps, { employeeUpdate })(EmployeeCreate);
+const styles = {
+    PickerTextStyle: {
+        fontSize: 18,
+        paddingLeft: 10,
+        paddingTop: 15
+    }
+};
+export default connect(mapStateToProps, {
+    employeeUpdate, employeeCreate
+})(EmployeeCreate);
